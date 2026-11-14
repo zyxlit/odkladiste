@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Odkladiště — Plovoucí poličky pro macOS</title>
+  <meta name="description" content="Minimalistická nativní macOS aplikace pro dočasné odkládání souborů do více samostatných plovoucích poliček. Open-source, bez telemetrie.">
+  <link rel="icon" type="image/png" href="images/app-icon.png">
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --surface: rgba(255, 255, 255, 0.85);
+      --surface-solid: #ffffff;
+      --text: #151821;
+      --muted: #5c6475;
+      --border: rgba(21, 24, 33, 0.10);
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --code-bg: #eef1f7;
+      --shadow: 0 20px 50px rgba(15, 23, 42, 0.10);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f1219;
+        --surface: rgba(25, 30, 42, 0.82);
+        --surface-solid: #171c28;
+        --text: #f1f5f9;
+        --muted: #9aa4b8;
+        --border: rgba(255, 255, 255, 0.10);
+        --accent: #3b82f6;
+        --accent-hover: #60a5fa;
+        --code-bg: #1e2433;
+        --shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+      }
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+      background:
+        radial-gradient(900px 500px at 15% -5%, rgba(59, 130, 246, 0.14), transparent 60%),
+        radial-gradient(800px 500px at 85% 5%, rgba(255, 107, 53, 0.11), transparent 60%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Nav */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 62px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 17px;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .brand img {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 14px;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 64px 0 40px;
+    }
+    .app-icon-hero {
+      width: 84px;
+      height: 84px;
+      border-radius: 20px;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.18);
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: clamp(34px, 5vw, 52px);
+      line-height: 1.12;
+      letter-spacing: -0.025em;
+      margin: 0 0 14px;
+    }
+    .subtitle {
+      font-size: clamp(16px, 2.2vw, 20px);
+      color: var(--muted);
+      max-width: 680px;
+      margin: 0 auto 24px;
+    }
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+    .badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: var(--surface-solid);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 44px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.12s ease, background 0.15s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary {
+      background: var(--surface-solid);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .showcase-frame {
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      background: var(--surface-solid);
+    }
+    .showcase-frame img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    /* Sections */
+    section { padding: 56px 0; }
+    h2 {
+      font-size: clamp(24px, 3vw, 32px);
+      letter-spacing: -0.02em;
+      margin: 0 0 10px;
+      text-align: center;
+    }
+    .section-lead {
+      text-align: center;
+      color: var(--muted);
+      max-width: 620px;
+      margin: 0 auto 36px;
+    }
+
+    /* Features */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+    }
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+    .card p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    /* Gallery */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 24px;
+    }
+    .gallery-item figcaption {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* Install */
+    .install-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .install-box ol {
+      margin: 0;
+      padding-left: 20px;
+    }
+    .install-box li {
+      margin-bottom: 16px;
+    }
+    .install-box li:last-child { margin-bottom: 0; }
+    pre {
+      margin: 8px 0 0;
+      padding: 12px 14px;
+      background: var(--code-bg);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      overflow-x: auto;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0 44px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    footer a {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <a class="brand" href="#">
+        <img src="images/app-icon.png" alt="Ikona Odkladiště">
+        <span>Odkladiště</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#funkce">Funkce</a>
+        <a href="#nahledy">Náhledy</a>
+        <a href="#instalace">Instalace</a>
+        <a href="https://github.com/zyxlit/odkladiste" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <img class="app-icon-hero" src="images/app-icon.png" alt="Odkladiště">
+      <h1>Plovoucí poličky pro vaše soubory</h1>
+      <p class="subtitle">
+        Minimalistická nativní macOS aplikace pro rychlé odkládání a přesouvání souborů mezi okny, aplikacemi a monitory. Více samostatných poliček místo jednoho přeplněného okna.
+      </p>
+      <div class="badges">
+        <span class="badge">macOS 14+</span>
+        <span class="badge">Swift 6 · AppKit &amp; SwiftUI</span>
+        <span class="badge">Licence MIT</span>
+        <span class="badge">Bez telemetrie a účtů</span>
+      </div>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#instalace">Stáhnout a spustit</a>
+        <a class="btn btn-secondary" href="https://github.com/zyxlit/odkladiste" target="_blank" rel="noopener">Zdrojový kód na GitHubu</a>
+        <a class="btn btn-secondary" href="https://buymeacoffee.com/cameklibor" target="_blank" rel="noopener">☕ Podpořit kávou</a>
+      </div>
+      <div class="showcase-frame">
+        <img src="images/hero-shelves.png" alt="Plovoucí poličky Odkladiště na ploše macOS">
+      </div>
+    </section>
+
+    <section id="funkce">
+      <h2>Navrženo pro klidnou práci na Macu</h2>
+      <p class="section-lead">Čistá nativní aplikace bez externích závislostí, která respektuje vaše soubory i soukromí.</p>
+      <div class="grid-3">
+        <div class="card">
+          <h3>Více nezávislých poliček</h3>
+          <p>Každá polička má vlastní plovoucí okno, název, barvu, velikost, pozici i volbu „Vždy navrchu“.</p>
+        </div>
+        <div class="card">
+          <h3>Bezpečné reference</h3>
+          <p>Soubory se na poličku nekopírují. Odebráním nebo smazáním poličky se původní soubory na disku nikdy nesmažou.</p>
+        </div>
+        <div class="card">
+          <h3>Barvy, vlastní hex i kapátko</h3>
+          <p>Vyberte si ze 6 základních barev, zadejte vlastní <code>#RRGGBB</code> kód nebo naberte barvu kapátkem z obrazovky.</p>
+        </div>
+        <div class="card">
+          <h3>Přetahování a tlačítko „Vše“</h3>
+          <p>Přesouvejte položky mezi poličkami, do Finderu či Mailu. Jedním tažením za „Vše“ předáte celý obsah poličky.</p>
+        </div>
+        <div class="card">
+          <h3>Quick Look &amp; zkratky</h3>
+          <p>Mezerník pro rychlý náhled, <code>⌘F</code> pro filtrování, <code>⌘Z</code> pro Zpět a globální zkratky <code>⌃⌥N</code> a <code>⌃⌥O</code>.</p>
+        </div>
+        <div class="card">
+          <h3>CZ / EN &amp; více monitorů</h3>
+          <p>Okamžité přepnutí češtiny a angličtiny v Nastavení a automatická obnova oken i při odpojení monitoru.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="nahledy">
+      <h2>Přehledné ovládání v horní liště</h2>
+      <p class="section-lead">Všechny poličky máte po ruce v menu baru, včetně změny barev, pořadí a rychlého připnutí.</p>
+      <div class="gallery-grid">
+        <figure class="gallery-item" style="margin:0;">
+          <div class="showcase-frame">
+            <img src="images/menubar-popover.png" alt="Menu bar popover s výběrem barev a akcemi">
+          </div>
+          <figcaption>Menu bar popover zůstává otevřený při změně barev, pořadí i přejmenování.</figcaption>
+        </figure>
+        <figure class="gallery-item" style="margin:0;">
+          <div class="showcase-frame">
+            <img src="images/about-and-settings.png" alt="Okno Nastavení a O aplikaci Odkladiště">
+          </div>
+          <figcaption>Okno Nastavení (CZ/EN, zkratky, chování) a okno O aplikaci.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="instalace">
+      <h2>Instalace ze zdrojového kódu (2 minuty)</h2>
+      <p class="section-lead">Stačí macOS 14+ a Command Line Tools (bez nutnosti instalovat celý Xcode).</p>
+      <div class="install-box">
+        <ol>
+          <li>
+            <strong>Jednorázová příprava</strong> (pokud na Macu ještě nemáte vývojářské nástroje):
+            <pre><code>xcode-select --install</code></pre>
+          </li>
+          <li>
+            <strong>Stažení, sestavení a spuštění:</strong>
+            <pre><code>git clone https://github.com/zyxlit/odkladiste.git
+cd odkladiste
+./scripts/build-app.sh
+cp -R build/Odkladiste.app /Applications/
+open /Applications/Odkladiste.app</code></pre>
+          </li>
+          <li>
+            <strong>Aktualizace na novou verzi:</strong> ukončete aplikaci v horní liště a spusťte:
+            <pre><code>git pull &amp;&amp; ./scripts/build-app.sh
+rm -rf /Applications/Odkladiste.app &amp;&amp; cp -R build/Odkladiste.app /Applications/
+open /Applications/Odkladiste.app</code></pre>
+          </li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      Odkladiště · Open-source pod licencí <a href="https://github.com/zyxlit/odkladiste/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a> ·
+      <a href="https://github.com/zyxlit/odkladiste" target="_blank" rel="noopener">GitHub</a> ·
+      <a href="https://buymeacoffee.com/cameklibor" target="_blank" rel="noopener">Podpořit kávou</a>
+    </div>
+  </footer>
+</body>
+</html>

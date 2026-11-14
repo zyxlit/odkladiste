@@ -1,0 +1,96 @@
+{
+  "sourceLanguage" : "cs",
+  "strings" : {
+    "Nová polička" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "New Shelf" } }
+      }
+    },
+    "Přetáhni sem soubory" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Drop files here" } }
+      }
+    },
+    "Nastavení…" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Settings…" } }
+      }
+    },
+    "O aplikaci Odkladiště" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "About Odkladiště" } }
+      }
+    },
+    "Ukončit Odkladiště" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Quit Odkladiště" } }
+      }
+    },
+    "Skrýt všechny" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Hide All" } }
+      }
+    },
+    "Zobrazit všechny" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Show All" } }
+      }
+    },
+    "Přejmenovat" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rename" } }
+      }
+    },
+    "Barva" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Color" } }
+      }
+    },
+    "Připnout do nabídky" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pin to Menu" } }
+      }
+    },
+    "Vždy navrchu" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Always on Top" } }
+      }
+    },
+    "Vyprázdnit" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Empty" } }
+      }
+    },
+    "Skrýt" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Hide" } }
+      }
+    },
+    "Odstranit poličku" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Delete Shelf" } }
+      }
+    },
+    "Vše" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "All" } }
+      }
+    },
+    "Obecné" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "General" } }
+      }
+    },
+    "Vzhled" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Appearance" } }
+      }
+    },
+    "Zkratky" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Shortcuts" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}
