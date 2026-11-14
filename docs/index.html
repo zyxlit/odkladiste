@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="cs">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Odkladiště — Plovoucí poličky pro macOS</title>
-  <meta name="description" content="Minimalistická nativní macOS aplikace pro dočasné odkládání souborů do více samostatných plovoucích poliček. Open-source, bez telemetrie.">
+  <title>Odkladiště — Floating File Shelves for macOS</title>
+  <meta name="description" content="Minimalist native macOS app for temporarily staging files across windows, apps, and displays using multiple independent floating shelves. Open-source, zero telemetry.">
   <link rel="icon" type="image/png" href="images/app-icon.png">
   <style>
     :root {
       --bg: #f6f7fb;
-      --surface: rgba(255, 255, 255, 0.85);
+      --surface: rgba(255, 255, 255, 0.88);
       --surface-solid: #ffffff;
       --text: #151821;
       --muted: #5c6475;
@@ -23,7 +23,7 @@
     @media (prefers-color-scheme: dark) {
       :root {
         --bg: #0f1219;
-        --surface: rgba(25, 30, 42, 0.82);
+        --surface: rgba(25, 30, 42, 0.88);
         --surface-solid: #171c28;
         --text: #f1f5f9;
         --muted: #9aa4b8;
@@ -52,14 +52,14 @@
     .container {
       max-width: 1040px;
       margin: 0 auto;
-      padding: 0 24px;
+      padding: 0 20px;
     }
 
-    /* Nav */
+    /* Header & Nav */
     header {
       position: sticky;
       top: 0;
-      z-index: 20;
+      z-index: 30;
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
       background: var(--surface);
@@ -70,6 +70,7 @@
       align-items: center;
       justify-content: space-between;
       height: 62px;
+      gap: 12px;
     }
     .brand {
       display: flex;
@@ -79,11 +80,18 @@
       font-size: 17px;
       text-decoration: none;
       color: var(--text);
+      flex-shrink: 0;
     }
     .brand img {
       width: 30px;
       height: 30px;
       border-radius: 7px;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
     }
     .nav-links {
       display: flex;
@@ -95,13 +103,91 @@
       color: var(--muted);
       text-decoration: none;
       font-weight: 500;
+      white-space: nowrap;
     }
     .nav-links a:hover { color: var(--text); }
+
+    /* Language Switcher */
+    .lang-switch {
+      display: inline-flex;
+      padding: 2px;
+      border-radius: 8px;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .lang-btn {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .lang-btn.active {
+      background: var(--surface-solid);
+      color: var(--text);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    }
+
+    /* Hamburger button */
+    .menu-toggle {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 9px;
+      border: 1px solid var(--border);
+      background: var(--surface-solid);
+      color: var(--text);
+      cursor: pointer;
+      padding: 0;
+    }
+    .menu-toggle svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .mobile-drawer {
+      display: none;
+      border-top: 1px solid var(--border);
+      padding: 12px 20px 16px;
+      background: var(--surface-solid);
+    }
+    .mobile-drawer.open {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .mobile-drawer a {
+      display: block;
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 15px;
+    }
+    .mobile-drawer a:hover {
+      background: var(--code-bg);
+    }
+
+    @media (max-width: 720px) {
+      .nav-links {
+        display: none;
+      }
+      .menu-toggle {
+        display: inline-flex;
+      }
+    }
 
     /* Hero */
     .hero {
       text-align: center;
-      padding: 64px 0 40px;
+      padding: 56px 0 36px;
     }
     .app-icon-hero {
       width: 84px;
@@ -111,7 +197,7 @@
       margin-bottom: 20px;
     }
     h1 {
-      font-size: clamp(34px, 5vw, 52px);
+      font-size: clamp(32px, 5vw, 52px);
       line-height: 1.12;
       letter-spacing: -0.025em;
       margin: 0 0 14px;
@@ -143,7 +229,7 @@
       flex-wrap: wrap;
       justify-content: center;
       gap: 12px;
-      margin-bottom: 44px;
+      margin-bottom: 40px;
     }
     .btn {
       display: inline-flex;
@@ -182,7 +268,7 @@
     }
 
     /* Sections */
-    section { padding: 56px 0; }
+    section { padding: 52px 0; }
     h2 {
       font-size: clamp(24px, 3vw, 32px);
       letter-spacing: -0.02em;
@@ -193,13 +279,13 @@
       text-align: center;
       color: var(--muted);
       max-width: 620px;
-      margin: 0 auto 36px;
+      margin: 0 auto 32px;
     }
 
     /* Features */
     .grid-3 {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 18px;
     }
     .card {
@@ -221,7 +307,7 @@
     /* Gallery */
     .gallery-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
       gap: 24px;
     }
     .gallery-item figcaption {
@@ -236,7 +322,7 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 28px;
+      padding: 24px;
       max-width: 760px;
       margin: 0 auto;
     }
@@ -279,102 +365,124 @@
   <header>
     <div class="container nav">
       <a class="brand" href="#">
-        <img src="images/app-icon.png" alt="Ikona Odkladiště">
+        <img src="images/app-icon.png" alt="Odkladiště icon">
         <span>Odkladiště</span>
       </a>
-      <nav class="nav-links">
-        <a href="#funkce">Funkce</a>
-        <a href="#nahledy">Náhledy</a>
-        <a href="#instalace">Instalace</a>
-        <a href="https://github.com/zyxlit/odkladiste" target="_blank" rel="noopener">GitHub</a>
-      </nav>
+      <div class="nav-right">
+        <nav class="nav-links" aria-label="Primary">
+          <a href="#features" data-i18n="nav_features">Features</a>
+          <a href="#previews" data-i18n="nav_previews">Previews</a>
+          <a href="#install" data-i18n="nav_install">Install</a>
+          <a href="https://github.com/zyxlit/odkladiste" target="_blank" rel="noopener">GitHub</a>
+        </nav>
+
+        <div class="lang-switch" role="group" aria-label="Language">
+          <button type="button" class="lang-btn active" data-lang="en">EN</button>
+          <button type="button" class="lang-btn" data-lang="cs">CS</button>
+        </div>
+
+        <button type="button" class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobileDrawer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="4" y1="7" x2="20" y2="7"></line>
+            <line x1="4" y1="12" x2="20" y2="12"></line>
+            <line x1="4" y1="17" x2="20" y2="17"></line>
+          </svg>
+        </button>
+      </div>
     </div>
+
+    <nav class="mobile-drawer" id="mobileDrawer" aria-label="Mobile menu">
+      <a href="#features" data-i18n="nav_features">Features</a>
+      <a href="#previews" data-i18n="nav_previews">Previews</a>
+      <a href="#install" data-i18n="nav_install">Install</a>
+      <a href="https://github.com/zyxlit/odkladiste" target="_blank" rel="noopener">GitHub</a>
+    </nav>
   </header>
 
   <main class="container">
     <section class="hero">
       <img class="app-icon-hero" src="images/app-icon.png" alt="Odkladiště">
-      <h1>Plovoucí poličky pro vaše soubory</h1>
-      <p class="subtitle">
-        Minimalistická nativní macOS aplikace pro rychlé odkládání a přesouvání souborů mezi okny, aplikacemi a monitory. Více samostatných poliček místo jednoho přeplněného okna.
+      <h1 data-i18n="hero_title">Floating Shelves for Your Files</h1>
+      <p class="subtitle" data-i18n="hero_subtitle">
+        A minimalist native macOS app for staging and moving files across windows, apps, and displays. Multiple independent shelves instead of a single crowded drop box.
       </p>
       <div class="badges">
         <span class="badge">macOS 14+</span>
         <span class="badge">Swift 6 · AppKit &amp; SwiftUI</span>
-        <span class="badge">Licence MIT</span>
-        <span class="badge">Bez telemetrie a účtů</span>
+        <span class="badge" data-i18n="badge_mit">MIT License</span>
+        <span class="badge" data-i18n="badge_privacy">Zero Telemetry &amp; No Accounts</span>
       </div>
       <div class="cta-row">
-        <a class="btn btn-primary" href="#instalace">Stáhnout a spustit</a>
-        <a class="btn btn-secondary" href="https://github.com/zyxlit/odkladiste" target="_blank" rel="noopener">Zdrojový kód na GitHubu</a>
-        <a class="btn btn-secondary" href="https://buymeacoffee.com/cameklibor" target="_blank" rel="noopener">☕ Podpořit kávou</a>
+        <a class="btn btn-primary" href="#install" data-i18n="cta_install">Download &amp; Run</a>
+        <a class="btn btn-secondary" href="https://github.com/zyxlit/odkladiste" target="_blank" rel="noopener" data-i18n="cta_github">Source Code on GitHub</a>
+        <a class="btn btn-secondary" href="https://buymeacoffee.com/cameklibor" target="_blank" rel="noopener" data-i18n="cta_coffee">☕ Buy Me a Coffee</a>
       </div>
       <div class="showcase-frame">
-        <img src="images/hero-shelves.png" alt="Plovoucí poličky Odkladiště na ploše macOS">
+        <img src="images/hero-shelves.png" alt="Odkladiště floating shelves on macOS desktop">
       </div>
     </section>
 
-    <section id="funkce">
-      <h2>Navrženo pro klidnou práci na Macu</h2>
-      <p class="section-lead">Čistá nativní aplikace bez externích závislostí, která respektuje vaše soubory i soukromí.</p>
+    <section id="features">
+      <h2 data-i18n="features_title">Built for Calm, Focused Work on Mac</h2>
+      <p class="section-lead" data-i18n="features_lead">A clean native app with zero external dependencies that respects both your files and your privacy.</p>
       <div class="grid-3">
         <div class="card">
-          <h3>Více nezávislých poliček</h3>
-          <p>Každá polička má vlastní plovoucí okno, název, barvu, velikost, pozici i volbu „Vždy navrchu“.</p>
+          <h3 data-i18n="f1_title">Multiple Independent Shelves</h3>
+          <p data-i18n="f1_desc">Every shelf has its own floating window, name, color, size, position, and “Always on Top” toggle.</p>
         </div>
         <div class="card">
-          <h3>Bezpečné reference</h3>
-          <p>Soubory se na poličku nekopírují. Odebráním nebo smazáním poličky se původní soubory na disku nikdy nesmažou.</p>
+          <h3 data-i18n="f2_title">Safe File References</h3>
+          <p data-i18n="f2_desc">Files are never duplicated onto a shelf. Removing items or deleting a shelf never deletes original files on disk.</p>
         </div>
         <div class="card">
-          <h3>Barvy, vlastní hex i kapátko</h3>
-          <p>Vyberte si ze 6 základních barev, zadejte vlastní <code>#RRGGBB</code> kód nebo naberte barvu kapátkem z obrazovky.</p>
+          <h3 data-i18n="f3_title">Colors, Custom Hex &amp; Eyedropper</h3>
+          <p data-i18n-html="f3_desc">Pick from 6 preset colors, enter any custom <code>#RRGGBB</code> code, or sample colors with the macOS color wheel &amp; eyedropper.</p>
         </div>
         <div class="card">
-          <h3>Přetahování a tlačítko „Vše“</h3>
-          <p>Přesouvejte položky mezi poličkami, do Finderu či Mailu. Jedním tažením za „Vše“ předáte celý obsah poličky.</p>
+          <h3 data-i18n="f4_title">Drag &amp; Drop + “All” Handle</h3>
+          <p data-i18n="f4_desc">Move or copy items to Finder, Mail, or between shelves. Drag the colored “All” pill to hand off the entire shelf at once.</p>
         </div>
         <div class="card">
-          <h3>Quick Look &amp; zkratky</h3>
-          <p>Mezerník pro rychlý náhled, <code>⌘F</code> pro filtrování, <code>⌘Z</code> pro Zpět a globální zkratky <code>⌃⌥N</code> a <code>⌃⌥O</code>.</p>
+          <h3 data-i18n="f5_title">Quick Look &amp; Shortcuts</h3>
+          <p data-i18n-html="f5_desc">Press Space for Quick Look, <code>⌘F</code> to filter, <code>⌘Z</code> to Undo, and use global shortcuts <code>⌃⌥N</code> and <code>⌃⌥O</code>.</p>
         </div>
         <div class="card">
-          <h3>CZ / EN &amp; více monitorů</h3>
-          <p>Okamžité přepnutí češtiny a angličtiny v Nastavení a automatická obnova oken i při odpojení monitoru.</p>
+          <h3 data-i18n="f6_title">EN / CS &amp; Multi-Display</h3>
+          <p data-i18n="f6_desc">Instant English and Czech switching in Settings, plus automatic window recovery when external displays disconnect.</p>
         </div>
       </div>
     </section>
 
-    <section id="nahledy">
-      <h2>Přehledné ovládání v horní liště</h2>
-      <p class="section-lead">Všechny poličky máte po ruce v menu baru, včetně změny barev, pořadí a rychlého připnutí.</p>
+    <section id="previews">
+      <h2 data-i18n="previews_title">Clean Controls in the Menu Bar</h2>
+      <p class="section-lead" data-i18n="previews_lead">Keep every shelf within reach from the menu bar popover, including colors, ordering, and pinning.</p>
       <div class="gallery-grid">
         <figure class="gallery-item" style="margin:0;">
           <div class="showcase-frame">
-            <img src="images/menubar-popover.png" alt="Menu bar popover s výběrem barev a akcemi">
+            <img src="images/menubar-popover.png" alt="Menu bar popover with color picker and actions">
           </div>
-          <figcaption>Menu bar popover zůstává otevřený při změně barev, pořadí i přejmenování.</figcaption>
+          <figcaption data-i18n="cap_popover">The menu bar popover stays open while you change colors, reorder, or rename shelves.</figcaption>
         </figure>
         <figure class="gallery-item" style="margin:0;">
           <div class="showcase-frame">
-            <img src="images/about-and-settings.png" alt="Okno Nastavení a O aplikaci Odkladiště">
+            <img src="images/about-and-settings.png" alt="Settings and About Odkladiště windows">
           </div>
-          <figcaption>Okno Nastavení (CZ/EN, zkratky, chování) a okno O aplikaci.</figcaption>
+          <figcaption data-i18n="cap_about">Settings window (EN/CS, shortcuts, behavior) and the About window.</figcaption>
         </figure>
       </div>
     </section>
 
-    <section id="instalace">
-      <h2>Instalace ze zdrojového kódu (2 minuty)</h2>
-      <p class="section-lead">Stačí macOS 14+ a Command Line Tools (bez nutnosti instalovat celý Xcode).</p>
+    <section id="install">
+      <h2 data-i18n="install_title">Build &amp; Run from Source (2 Minutes)</h2>
+      <p class="section-lead" data-i18n="install_lead">Requires macOS 14+ and Apple Command Line Tools (full Xcode is not required).</p>
       <div class="install-box">
         <ol>
           <li>
-            <strong>Jednorázová příprava</strong> (pokud na Macu ještě nemáte vývojářské nástroje):
+            <strong data-i18n="step1_title">One-time setup</strong> <span data-i18n="step1_note">(if you don’t have Apple developer tools installed yet):</span>
             <pre><code>xcode-select --install</code></pre>
           </li>
           <li>
-            <strong>Stažení, sestavení a spuštění:</strong>
+            <strong data-i18n="step2_title">Download, build, and launch:</strong>
             <pre><code>git clone https://github.com/zyxlit/odkladiste.git
 cd odkladiste
 ./scripts/build-app.sh
@@ -382,7 +490,7 @@ cp -R build/Odkladiste.app /Applications/
 open /Applications/Odkladiste.app</code></pre>
           </li>
           <li>
-            <strong>Aktualizace na novou verzi:</strong> ukončete aplikaci v horní liště a spusťte:
+            <strong data-i18n="step3_title">Update to a new version:</strong> <span data-i18n="step3_note">quit Odkladiště from the menu bar and run:</span>
             <pre><code>git pull &amp;&amp; ./scripts/build-app.sh
 rm -rf /Applications/Odkladiste.app &amp;&amp; cp -R build/Odkladiste.app /Applications/
 open /Applications/Odkladiste.app</code></pre>
@@ -394,10 +502,142 @@ open /Applications/Odkladiste.app</code></pre>
 
   <footer>
     <div class="container">
-      Odkladiště · Open-source pod licencí <a href="https://github.com/zyxlit/odkladiste/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a> ·
+      Odkladiště · <span data-i18n="footer_license">Open-source under the</span> <a href="https://github.com/zyxlit/odkladiste/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a> <span data-i18n="footer_license_suffix">license</span> ·
       <a href="https://github.com/zyxlit/odkladiste" target="_blank" rel="noopener">GitHub</a> ·
-      <a href="https://buymeacoffee.com/cameklibor" target="_blank" rel="noopener">Podpořit kávou</a>
+      <a href="https://buymeacoffee.com/cameklibor" target="_blank" rel="noopener" data-i18n="footer_coffee">Buy Me a Coffee</a>
     </div>
   </footer>
+
+  <script>
+    const translations = {
+      en: {
+        page_title: "Odkladiště — Floating File Shelves for macOS",
+        nav_features: "Features",
+        nav_previews: "Previews",
+        nav_install: "Install",
+        hero_title: "Floating Shelves for Your Files",
+        hero_subtitle: "A minimalist native macOS app for staging and moving files across windows, apps, and displays. Multiple independent shelves instead of a single crowded drop box.",
+        badge_mit: "MIT License",
+        badge_privacy: "Zero Telemetry & No Accounts",
+        cta_install: "Download & Run",
+        cta_github: "Source Code on GitHub",
+        cta_coffee: "☕ Buy Me a Coffee",
+        features_title: "Built for Calm, Focused Work on Mac",
+        features_lead: "A clean native app with zero external dependencies that respects both your files and your privacy.",
+        f1_title: "Multiple Independent Shelves",
+        f1_desc: "Every shelf has its own floating window, name, color, size, position, and “Always on Top” toggle.",
+        f2_title: "Safe File References",
+        f2_desc: "Files are never duplicated onto a shelf. Removing items or deleting a shelf never deletes original files on disk.",
+        f3_title: "Colors, Custom Hex & Eyedropper",
+        f3_desc: "Pick from 6 preset colors, enter any custom <code>#RRGGBB</code> code, or sample colors with the macOS color wheel &amp; eyedropper.",
+        f4_title: "Drag & Drop + “All” Handle",
+        f4_desc: "Move or copy items to Finder, Mail, or between shelves. Drag the colored “All” pill to hand off the entire shelf at once.",
+        f5_title: "Quick Look & Shortcuts",
+        f5_desc: "Press Space for Quick Look, <code>⌘F</code> to filter, <code>⌘Z</code> to Undo, and use global shortcuts <code>⌃⌥N</code> and <code>⌃⌥O</code>.",
+        f6_title: "EN / CS & Multi-Display",
+        f6_desc: "Instant English and Czech switching in Settings, plus automatic window recovery when external displays disconnect.",
+        previews_title: "Clean Controls in the Menu Bar",
+        previews_lead: "Keep every shelf within reach from the menu bar popover, including colors, ordering, and pinning.",
+        cap_popover: "The menu bar popover stays open while you change colors, reorder, or rename shelves.",
+        cap_about: "Settings window (EN/CS, shortcuts, behavior) and the About window.",
+        install_title: "Build & Run from Source (2 Minutes)",
+        install_lead: "Requires macOS 14+ and Apple Command Line Tools (full Xcode is not required).",
+        step1_title: "One-time setup",
+        step1_note: "(if you don’t have Apple developer tools installed yet):",
+        step2_title: "Download, build, and launch:",
+        step3_title: "Update to a new version:",
+        step3_note: "quit Odkladiště from the menu bar and run:",
+        footer_license: "Open-source under the",
+        footer_license_suffix: "license",
+        footer_coffee: "Buy Me a Coffee"
+      },
+      cs: {
+        page_title: "Odkladiště — Plovoucí poličky pro macOS",
+        nav_features: "Funkce",
+        nav_previews: "Náhledy",
+        nav_install: "Instalace",
+        hero_title: "Plovoucí poličky pro vaše soubory",
+        hero_subtitle: "Minimalistická nativní macOS aplikace pro rychlé odkládání a přesouvání souborů mezi okny, aplikacemi a monitory. Více samostatných poliček místo jednoho přeplněného okna.",
+        badge_mit: "Licence MIT",
+        badge_privacy: "Bez telemetrie a účtů",
+        cta_install: "Stáhnout a spustit",
+        cta_github: "Zdrojový kód na GitHubu",
+        cta_coffee: "☕ Podpořit kávou",
+        features_title: "Navrženo pro klidnou práci na Macu",
+        features_lead: "Čistá nativní aplikace bez externích závislostí, která respektuje vaše soubory i soukromí.",
+        f1_title: "Více nezávislých poliček",
+        f1_desc: "Každá polička má vlastní plovoucí okno, název, barvu, velikost, pozici i volbu „Vždy navrchu“.",
+        f2_title: "Bezpečné reference",
+        f2_desc: "Soubory se na poličku nekopírují. Odebráním nebo smazáním poličky se původní soubory na disku nikdy nesmažou.",
+        f3_title: "Barvy, vlastní hex i kapátko",
+        f3_desc: "Vyberte si ze 6 základních barev, zadejte vlastní <code>#RRGGBB</code> kód nebo naberte barvu kapátkem z obrazovky.",
+        f4_title: "Přetahování a tlačítko „Vše“",
+        f4_desc: "Přesouvejte položky do Finderu, Mailu či mezi poličkami. Jedním tažením za „Vše“ předáte celý obsah poličky.",
+        f5_title: "Quick Look & zkratky",
+        f5_desc: "Mezerník pro rychlý náhled, <code>⌘F</code> pro filtrování, <code>⌘Z</code> pro Zpět a globální zkratky <code>⌃⌥N</code> a <code>⌃⌥O</code>.",
+        f6_title: "CZ / EN & více monitorů",
+        f6_desc: "Okamžité přepnutí češtiny a angličtiny v Nastavení a automatická obnova oken i při odpojení monitoru.",
+        previews_title: "Přehledné ovládání v horní liště",
+        previews_lead: "Všechny poličky máte po ruce v menu baru, včetně změny barev, pořadí a rychlého připnutí.",
+        cap_popover: "Menu bar popover zůstává otevřený při změně barev, pořadí i přejmenování.",
+        cap_about: "Okno Nastavení (CZ/EN, zkratky, chování) a okno O aplikaci.",
+        install_title: "Instalace ze zdrojového kódu (2 minuty)",
+        install_lead: "Stačí macOS 14+ a Command Line Tools (není potřeba instalovat celý Xcode).",
+        step1_title: "Jednorázová příprava",
+        step1_note: "(pokud na Macu ještě nemáte vývojářské nástroje):",
+        step2_title: "Stažení, sestavení a spuštění:",
+        step3_title: "Aktualizace na novou verzi:",
+        step3_note: "ukončete aplikaci v horní liště a spusťte:",
+        footer_license: "Open-source pod licencí",
+        footer_license_suffix: "",
+        footer_coffee: "Podpořit kávou"
+      }
+    };
+
+    function applyLanguage(lang) {
+      const dict = translations[lang] || translations.en;
+      document.documentElement.lang = lang;
+      document.title = dict.page_title;
+
+      document.querySelectorAll("[data-i18n]").forEach((el) => {
+        const key = el.getAttribute("data-i18n");
+        if (dict[key] !== undefined) el.textContent = dict[key];
+      });
+      document.querySelectorAll("[data-i18n-html]").forEach((el) => {
+        const key = el.getAttribute("data-i18n-html");
+        if (dict[key] !== undefined) el.innerHTML = dict[key];
+      });
+      document.querySelectorAll(".lang-btn").forEach((btn) => {
+        btn.classList.toggle("active", btn.getAttribute("data-lang") === lang);
+      });
+      try { localStorage.setItem("odkladiste_lang", lang); } catch (_) {}
+    }
+
+    document.querySelectorAll(".lang-btn").forEach((btn) => {
+      btn.addEventListener("click", () => applyLanguage(btn.getAttribute("data-lang")));
+    });
+
+    const menuToggle = document.getElementById("menuToggle");
+    const mobileDrawer = document.getElementById("mobileDrawer");
+
+    menuToggle.addEventListener("click", () => {
+      const isOpen = mobileDrawer.classList.toggle("open");
+      menuToggle.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    mobileDrawer.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => {
+        mobileDrawer.classList.remove("open");
+        menuToggle.setAttribute("aria-expanded", "false");
+      });
+    });
+
+    let initialLang = "en";
+    try {
+      const saved = localStorage.getItem("odkladiste_lang");
+      if (saved === "cs" || saved === "en") initialLang = saved;
+    } catch (_) {}
+    applyLanguage(initialLang);
+  </script>
 </body>
 </html>
