@@ -384,16 +384,16 @@ struct ShelfPanelRootView: View {
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @AppStorage("odkladiste.thumbnailSize") private var thumbnailSizeRaw: String = ThumbnailSizeOption.medium.rawValue
-    @State private var isDropHighlighted = false
-    @State private var isRenaming = false
-    @State private var draftName = ""
-    @State private var isSearching = false
-    @State private var searchQuery = ""
-    @State private var selectedItemIDs: Set<UUID> = []
-    @State private var selectionAnchorID: UUID?
-    @State private var showDiagnostics = false
-    @State private var confirmEmpty = false
-    @State private var confirmDelete = false
+    @ViewState private var isDropHighlighted = false
+    @ViewState private var isRenaming = false
+    @ViewState private var draftName = ""
+    @ViewState private var isSearching = false
+    @ViewState private var searchQuery = ""
+    @ViewState private var selectedItemIDs: Set<UUID> = []
+    @ViewState private var selectionAnchorID: UUID?
+    @ViewState private var showDiagnostics = false
+    @ViewState private var confirmEmpty = false
+    @ViewState private var confirmDelete = false
     @FocusState private var renameFocused: Bool
     @FocusState private var searchFocused: Bool
 

@@ -35,9 +35,9 @@ struct SettingsView: View {
     @AppStorage("odkladiste.thumbnailSize") private var thumbnailSizeRaw = ThumbnailSizeOption.medium.rawValue
     @AppStorage("odkladiste.defaultDisplayMode") private var defaultDisplayModeRaw = DisplayMode.grid.rawValue
 
-    @State private var launchAtLogin = SMAppService.mainApp.status == .enabled
-    @State private var launchAtLoginError: String?
-    @State private var cacheClearedNotice = false
+    @ViewState private var launchAtLogin = SMAppService.mainApp.status == .enabled
+    @ViewState private var launchAtLoginError: String?
+    @ViewState private var cacheClearedNotice = false
 
     let hotkeyStatusSummary: [(label: String, shortcut: String, isRegistered: Bool)]
     let onAllSpacesChanged: (Bool) -> Void

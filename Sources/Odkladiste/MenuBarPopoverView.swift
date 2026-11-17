@@ -14,15 +14,15 @@ struct MenuBarPopoverView: View {
     let onAbout: () -> Void
     let onQuit: () -> Void
 
-    @State private var expandedShelfID: UUID?
-    @State private var renamingShelfID: UUID?
-    @State private var draftName: String = ""
-    @State private var hexEditingShelfID: UUID?
-    @State private var hexInput: String = ""
-    @State private var hexError: Bool = false
-    @State private var searchText: String = ""
-    @State private var shelfPendingEmpty: Shelf?
-    @State private var shelfPendingDelete: Shelf?
+    @ViewState private var expandedShelfID: UUID?
+    @ViewState private var renamingShelfID: UUID?
+    @ViewState private var draftName: String = ""
+    @ViewState private var hexEditingShelfID: UUID?
+    @ViewState private var hexInput: String = ""
+    @ViewState private var hexError: Bool = false
+    @ViewState private var searchText: String = ""
+    @ViewState private var shelfPendingEmpty: Shelf?
+    @ViewState private var shelfPendingDelete: Shelf?
 
     private var filteredShelves: [Shelf] {
         let ordered = store.orderedShelves

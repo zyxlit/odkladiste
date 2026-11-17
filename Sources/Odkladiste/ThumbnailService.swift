@@ -57,7 +57,7 @@ struct FileThumbnailView: View {
     let url: URL
     let size: CGFloat
 
-    @State private var image: NSImage?
+    @ViewState private var image: NSImage?
 
     var body: some View {
         Group {

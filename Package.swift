@@ -20,7 +20,7 @@ let package = Package(
             name: "Odkladiste",
             dependencies: ["OdkladisteCore"],
             path: "Sources/Odkladiste",
-            resources: [.process("Resources")]
+            exclude: ["Resources"]
         ),
         .testTarget(
             name: "OdkladisteCoreTests",
